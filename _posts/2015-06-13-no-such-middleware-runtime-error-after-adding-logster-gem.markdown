@@ -2,7 +2,7 @@
 layout: post
 title:  "No such middleware RuntimeError after adding logster gem"
 date:   2015-06-13 20:25:10
-categories: others
+categories: rails
 ---
 
 [Logster](https://github.com/discourse/logster) is a web log viewer for Rack
@@ -34,11 +34,10 @@ I had no clue what's going wrong. So I created an new rails app and installed
 Logster to see if it works or not. Unsurprisingly the rails server started
 successfully and it worked well.
 
-Then I didn't know what to do next. It's the google time. However I couldn't find
-anything useful on either Stack overflow or Logster github issues.
+It's the google time then. However I couldn't find anything helpful.
 
-Suddenly, I ran `rake middleware` in the newly created test app and it let me
-find that `ActionDispatch::DebugExceptions` wasn't in the list any more.
+Suddenly when I ran `rake middleware` in the new test app, I noticed
+that `ActionDispatch::DebugExceptions` wasn't in the list any more.
 Instead, `Logster::Middleware::DebugExceptions` appeared at the place where
 `ActionDispatch::DebugExceptions` was supposed to be.
 
