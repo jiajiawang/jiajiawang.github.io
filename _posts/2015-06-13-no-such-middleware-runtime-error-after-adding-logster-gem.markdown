@@ -1,5 +1,6 @@
 ---
 layout: post
+comments: true
 title:  "No such middleware RuntimeError after adding logster gem"
 date:   2015-06-13 20:25:10
 categories: rails

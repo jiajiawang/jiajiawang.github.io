@@ -1,5 +1,6 @@
 ---
 layout: post
+comments: true
 title:  "How to DRY api specs with rspec shared contexts and metadata"
 date:   2015-07-11 19:35:13
 categories: rails

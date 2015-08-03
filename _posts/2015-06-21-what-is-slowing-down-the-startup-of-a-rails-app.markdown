@@ -1,5 +1,6 @@
 ---
 layout: post
+comments: true
 title:  "What is slowing down the startup of a rails app"
 date:   2015-06-21 23:10:27
 categories: rails
