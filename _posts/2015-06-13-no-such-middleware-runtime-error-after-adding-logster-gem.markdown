@@ -34,9 +34,7 @@ I had no clue what's going wrong. So I created an new rails app and installed
 Logster to see if it works or not. Unsurprisingly the rails server started
 successfully and it worked well.
 
-It's the google time then. However I couldn't find anything helpful.
-
-Suddenly when I ran `rake middleware` in the new test app, I noticed
+Then when I ran `rake middleware` in the new test app, I noticed
 that `ActionDispatch::DebugExceptions` wasn't in the list any more.
 Instead, `Logster::Middleware::DebugExceptions` appeared at the place where
 `ActionDispatch::DebugExceptions` was supposed to be.

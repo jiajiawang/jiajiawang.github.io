@@ -7,9 +7,9 @@ categories: rails
 
 ## Problem
 
-I recently moved on to a previous rails app which was initialized by me and
-another developer almost 8 months ago.
-I can't remember when it began that the startup of this app takes almost a
+I recently moved on to a previous rails app which was initialized
+almost 8 months ago.
+I can't remember when it begins that the startup of this app takes almost a
 minute in development mode.
 
 It's been OK as rails has auto reload in development mode.
@@ -21,7 +21,7 @@ requires change of initializers constantly and then leads to a server restart.
 Suddenly that 1 minute startup time became unbearable and it's time to
 correct it.
 
-## Action
+## Actions
 
 ### Slow gem?
 Loading gems is the first step of booting a rails app.
@@ -82,114 +82,19 @@ Next I try to use [Pry](https://github.com/pry/pry) and
 to find out the exact slow function call.
 
 The methodology is simple:
--> set a `break` point
--> use `next` to find the slow method in current frame
--> `step` into the slow method
--> set a `break` point
--> ...
 
-First, in `config/environment.rb`, add `binding.pry` before
-`Rails.application.initialize!`
+1. set a `break` point
 
-~~~ ruby
-    # Load the Rails application.
-    require File.expand_path('../application', __FILE__)
+2. use `next` to find the slow method in current frame
 
-    # Initialize the Rails application.
-    binding.pry
-    Rails.application.initialize!
-~~~
+3. `step` into the slow method
 
-Then execute `rails s`:
+4. repeat step 1-3
 
-~~~
-From: /Users/JJ/blackcitrus/secret/secret_rails/config/environment.rb @ line 6 :
+However quickly, after ten minutes..., I realized that rails is a very complex system and
+what I was doing may goes forever.
 
-    1: # Load the Rails application.
-    2: require File.expand_path('../application', __FILE__)
-    3:
-    4: # Initialize the Rails application.
-    5: binding.pry
- => 6: Rails.application.initialize!
-~~~
-
-Set a break point in `set_routes_reloader_hook`:
-
-~~~
-[1] pry(main)> break /Users/JJ/.rbenv/versions/2.2.1/lib/ruby/gems/2.2.0/gems/railties-4.1.10/lib/rails/application/finisher.rb:70
-
-  Breakpoint 1: /Users/JJ/.rbenv/versions/2.2.1/lib/ruby/gems/2.2.0/gems/railties-4.1.10/lib/rails/application/finisher.rb @ 70 (Enabled)
-
-    67:       # Set routes reload after the finisher hook to ensure routes added in
-    68:       # the hook are taken into account.
-    69:       initializer :set_routes_reloader_hook do
- => 70: reloader = routes_reloader
-    71: reloader.execute_if_updated
-    72: self.reloaders << reloader
-    73: ActionDispatch::Reloader.to_prepare do
-~~~
-
-Execute `continue`
-
-~~~
-[2] pry(main)> continue
-
-  Breakpoint 1. First hit
-
-From: /Users/JJ/.rbenv/versions/2.2.1/lib/ruby/gems/2.2.0/gems/railties-4.1.10/lib/rails/application/finisher.rb @ line 71 :
-
-    66:
-    67:       # Set routes reload after the finisher hook to ensure routes added in
-    68:       # the hook are taken into account.
-    69:       initializer :set_routes_reloader_hook do
- => 70:         reloader = routes_reloader
-    71:         reloader.execute_if_updated
-    72:         self.reloaders << reloader
-    73:         ActionDispatch::Reloader.to_prepare do
-    74:           # We configure #execute rather than #execute_if_updated because if
-    75:           # autoloaded constants are cleared we need to reload routes also in
-    76:           # case any was used there, as in
-~~~
-
-Execute `next`:
-
-~~~
-[2] pry(#<Secrect::Application>)> next
-
-From: /Users/JJ/.rbenv/versions/2.2.1/lib/ruby/gems/2.2.0/gems/railties-4.1.10/lib/rails/application/finisher.rb @ line 71 :
-
-    66:
-    67:       # Set routes reload after the finisher hook to ensure routes added in
-    68:       # the hook are taken into account.
-    69:       initializer :set_routes_reloader_hook do
-    70:         reloader = routes_reloader
- => 71:         reloader.execute_if_updated
-    72:         self.reloaders << reloader
-    73:         ActionDispatch::Reloader.to_prepare do
-    74:           # We configure #execute rather than #execute_if_updated because if
-    75:           # autoloaded constants are cleared we need to reload routes also in
-    76:           # case any was used there, as in
-~~~
-
-The execution quickly steps over to the next line.
-
-Execute `next`:
-
-~~~
-[3] pry(#<Secrect::Application>)> next
-~~~
-
-This time it takes around 1 minute to step over to the next line.
-So `71: reloader.execute_if_updated` is the line we are looking for.
-
-Stop current execution, restart server and set a break point at this line.
-
-Repeat what I have just done...
-
-However quickly, after ten minutes, I realized rails is a very complex system and
-what I am doing now may goes forever.
-
-### The right way - profiling and benchmark
+### What's the real next - profiling and benchmark
 What I need at this moment is [ruby-prof](https://github.com/ruby-prof/ruby-prof).
 
 `bundle open` railties, in `lib/rails/application/finisher.rb`, add code:
