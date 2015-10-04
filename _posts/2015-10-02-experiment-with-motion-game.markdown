@@ -94,7 +94,6 @@ To let Mario run, update `add_ground`:
   ...
 ~~~
 
-We are actually moving the ground. But it looks like that Mario is moving.
 And to make it look better, we can add an animation:
 
 ~~~ruby
@@ -195,14 +194,14 @@ play the game if they don't fall from it.
   end
 ~~~
 
-This will create a 1~5 blocks long moving ground every one second.
+This will create a 1~5 blocks long ground every one second.
 
 ### What's next
 
-A featured game should have sounds, Game Over and Restart Game. To do it:
+A featured game should have sounds, Game Over and Restart Game. Update the file:
 
 ~~~ruby
-@@ -11,9 +11,14 @@ class MainScene < MG::Scene
+     ...
      @on_ground = false
      @block_update = 0
      @random = Random.new
@@ -217,8 +216,8 @@ A featured game should have sounds, Game Over and Restart Game. To do it:
          @on_ground = false
          @mario.velocity = [0, 400]
        end
-@@ -66,6 +71,12 @@ class MainScene < MG::Scene
-   end
+     end
+     ...
 
    def update(delta)
 +    if @mario.position.y < 0
@@ -226,6 +225,7 @@ A featured game should have sounds, Game Over and Restart Game. To do it:
 +      stop_update
 +      @game_over = true
 +    end
+   ...
 ~~~
 
 We can now play the game. Survive as long as you can!
